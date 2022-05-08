@@ -1,4 +1,4 @@
-package pojo;
+package pojos;
 
 public class CommentsPOJO {
     public CommentsPOJO(Integer postId, Integer id, String name, String email, String body) {

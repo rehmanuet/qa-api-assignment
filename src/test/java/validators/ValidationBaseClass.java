@@ -1,11 +1,17 @@
-import Constants.Constants;
-import pojo.CommentsPOJO;
-import pojo.PostsPOJO;
-import pojo.UsersPOJO;
+package validators;
+
+import extent.ExtentTestManager;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterSuite;
+import utils.Constants;
+import pojos.CommentsPOJO;
+import pojos.PostsPOJO;
+import pojos.UsersPOJO;
 import listeners.TestListener;
 import io.restassured.RestAssured;
 import org.testng.annotations.Listeners;
 
+import javax.mail.MessagingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -111,5 +117,14 @@ public class ValidationBaseClass {
             }
         }
         return emails;
+    }
+
+    /**
+     * Executes at the end of the test suite to populate Extent Report and Send it as email
+     */
+
+    @AfterSuite(alwaysRun = true)
+    public void endTestSuite() {
+        ExtentTestManager.flush();
     }
 }

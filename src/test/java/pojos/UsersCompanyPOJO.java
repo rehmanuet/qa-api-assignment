@@ -1,4 +1,4 @@
-package pojo;
+package pojos;
 
 public class UsersCompanyPOJO {
     public String getName() {

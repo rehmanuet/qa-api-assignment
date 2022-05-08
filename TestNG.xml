@@ -6,9 +6,9 @@
     </listeners>
     <test name="RestAssured-Java-Assignment" thread-count="1" preserve-order="true"  enabled="true">
         <classes>
-            <class name="UsersValidationTest"/>
-            <class name="PostsValidationTest"/>
-            <class name="CommentsValidationTest"/>
+            <class name="validators.UsersValidationTest"/>
+            <class name="validators.PostsValidationTest"/>
+            <class name="validators.CommentsValidationTest"/>
         </classes>
     </test>
 </suite>
