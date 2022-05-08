@@ -1,0 +1,14 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="API Testing Suite" verbose="1" parallel="none">
+    <listeners>
+        <listener class-name="listeners.TestListener"/>
+    </listeners>
+    <test name="RestAssured-Java-Assignment" thread-count="1" preserve-order="true"  enabled="true">
+        <classes>
+            <class name="UsersValidationTest"/>
+            <class name="PostsValidationTest"/>
+            <class name="CommentsValidationTest"/>
+        </classes>
+    </test>
+</suite>
