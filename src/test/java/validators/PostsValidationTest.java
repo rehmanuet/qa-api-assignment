@@ -32,7 +32,7 @@ public class PostsValidationTest extends ValidationBaseClass {
     public void tc008_checkIfPostsExistForInvalidUser() {
         ExtentTestManager.startTest(Constants.POSTS_ENDPOINT + " PostsForInvalidUser", "Check # of Post for invalid user");
         Response response = JsonPlaceholder.getInstance().user.getUser.getUsers();
-        List<UsersPOJO> users = getListFromResponse(response, "$", UsersPOJO.class);
+        List<UsersPOJO> users = getListFromResponse(response, UsersPOJO.class);
         Integer userIds = users.stream().filter(a -> a.getUsername().equals(Constants.INVALID_USERNAME)).map(UsersPOJO::getId).findFirst().orElse(0);
         // Get postIds
         response = JsonPlaceholder.getInstance().post.getPost.getPostsByUserid(userIds);

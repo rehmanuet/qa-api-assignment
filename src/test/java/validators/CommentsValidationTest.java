@@ -37,7 +37,7 @@ public class CommentsValidationTest extends ValidationBaseClass {
         Integer id = JsonPlaceholder.getInstance().user.getUser.getUserIdByName(Constants.VALID_USERNAME);
         // Get all post
         Response response = JsonPlaceholder.getInstance().post.getPost.getPosts();
-        List<PostsPOJO> posts = getListFromResponse(response, "$", PostsPOJO.class);
+        List<PostsPOJO> posts = getListFromResponse(response, PostsPOJO.class);
 
         //TODO add assertion for 0 noth found
         //Get ids of post made by "Delphine"
@@ -45,7 +45,7 @@ public class CommentsValidationTest extends ValidationBaseClass {
         for (Integer post : list) {
             // Get all comments for each post
             response = JsonPlaceholder.getInstance().comment.getComment.getCommentByPostId(post);
-            List<CommentsPOJO> comments = getListFromResponse(response, "$", CommentsPOJO.class);
+            List<CommentsPOJO> comments = getListFromResponse(response, CommentsPOJO.class);
             for (CommentsPOJO comment : comments) {
                 Assert.assertEquals(post, comment.getPostId());
             }
@@ -60,13 +60,13 @@ public class CommentsValidationTest extends ValidationBaseClass {
         Integer userId = JsonPlaceholder.getInstance().user.getUser.getUserIdByName(Constants.VALID_USERNAME);
         // Get postIds
         Response response = JsonPlaceholder.getInstance().post.getPost.getPosts();
-        List<PostsPOJO> posts = getListFromResponse(response, "$", PostsPOJO.class);
+        List<PostsPOJO> posts = getListFromResponse(response, PostsPOJO.class);
         List<Integer> postIds = posts.stream().filter(a -> a.getUserId().equals(userId)).map(PostsPOJO::getId).collect(Collectors.toList());
 
         ArrayList<String> emails = new ArrayList<>();
         for (Integer id : postIds) {
             response = JsonPlaceholder.getInstance().comment.getComment.getCommentByPostId(id);
-            List<CommentsPOJO> comments = getListFromResponse(response, "$", CommentsPOJO.class);
+            List<CommentsPOJO> comments = getListFromResponse(response, CommentsPOJO.class);
             for (CommentsPOJO comment : comments) {
                 emails.add(comment.getEmail());
             }
@@ -85,12 +85,13 @@ public class CommentsValidationTest extends ValidationBaseClass {
         Integer userId = JsonPlaceholder.getInstance().user.getUser.getUserIdByName(Constants.VALID_USERNAME);
         // Get posts
         Response response = JsonPlaceholder.getInstance().post.getPost.getPosts();
-        List<PostsPOJO> posts = getListFromResponse(response, "$", PostsPOJO.class);
+        List<PostsPOJO> posts = getListFromResponse(response, PostsPOJO.class);
         //Get ids of post made by "Delphine"
         List<Integer> list = posts.stream().filter(a -> a.getUserId().equals(userId)).map(PostsPOJO::getId).collect(Collectors.toList());
 
         for (int post : list) {
-            CommentsPOJO[] comments = getComments(post);
+            response = JsonPlaceholder.getInstance().comment.getComment.getCommentByPostId(post);
+            List<CommentsPOJO> comments = getListFromResponse(response, CommentsPOJO.class);
             for (CommentsPOJO comment : comments) {
                 Assert.assertNotNull(comment.getBody());
             }
