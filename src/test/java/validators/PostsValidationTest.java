@@ -1,13 +1,20 @@
 package validators;
 
+import base.JsonPlaceholder;
 import com.relevantcodes.extentreports.LogStatus;
 import extent.ExtentTestManager;
+import io.restassured.response.Response;
+import lombok.extern.java.Log;
+import pojos.PostsPOJO;
+import pojos.UsersPOJO;
 import utils.Constants;
 import io.restassured.RestAssured;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 
@@ -15,32 +22,31 @@ public class PostsValidationTest extends ValidationBaseClass {
 
     @Test
     public void tc006_checkStatusCodeForPosts() {
-        ExtentTestManager.startTest(Constants.POSTS_ENDPOINT+" StatusCode","Status Code Verification");
-        int response_code = getStatusCode(Constants.POSTS_ENDPOINT);
-        ExtentTestManager.getTest().log(LogStatus.INFO, "Endpoint: "+Constants.POSTS_ENDPOINT+" Status Code: "+response_code);
-        Assert.assertEquals(response_code, 200);
-    }
-
-    @Test
-    public void tc007_checkIfPostsExistForValidUser() {
-        ExtentTestManager.startTest(Constants.POSTS_ENDPOINT+" PostsForValidUser","Check # of Post for valid user");
-        ArrayList<Integer> posts = getPosts(getUser(Constants.VALID_USERNAME));
-        ExtentTestManager.getTest().log(LogStatus.INFO, "Username: "+Constants.VALID_USERNAME+" Number of Post : "+posts.size());
-        Assert.assertNotNull(posts);
+        ExtentTestManager.startTest(Constants.POSTS_ENDPOINT + " StatusCode", "Status Code Verification");
+        Response response = JsonPlaceholder.getInstance().post.getPost.getPosts();
+        // ExtentTestManager.getTest().log(LogStatus.INFO, "Endpoint: "+Constants.POSTS_ENDPOINT+" Status Code: "+response_code);
+        validateResponseStatusCode(response, 200);
     }
 
     @Test
     public void tc008_checkIfPostsExistForInvalidUser() {
-        ExtentTestManager.startTest(Constants.POSTS_ENDPOINT+" PostsForInvalidUser","Check # of Post for invalid user");
-        ArrayList<Integer> posts = getPosts(getUser(Constants.INVALID_USERNAME));
-        ExtentTestManager.getTest().log(LogStatus.INFO, "Username: "+Constants.INVALID_USERNAME+" Number of Post : "+posts.size());
-        Assert.assertEquals(posts.size(), 0);
+        ExtentTestManager.startTest(Constants.POSTS_ENDPOINT + " PostsForInvalidUser", "Check # of Post for invalid user");
+        Response response = JsonPlaceholder.getInstance().user.getUser.getUsers();
+        List<UsersPOJO> users = getListFromResponse(response, "$", UsersPOJO.class);
+        Integer userIds = users.stream().filter(a -> a.getUsername().equals(Constants.INVALID_USERNAME)).map(UsersPOJO::getId).findFirst().orElse(0);
+        // Get postIds
+        response = JsonPlaceholder.getInstance().post.getPost.getPostsByUserid(userIds);
+        PostsPOJO pojo = getObjectFromResponsePath(response, "$", PostsPOJO.class);
+        // ExtentTestManager.getTest().log(LogStatus.INFO, "Username: " + Constants.INVALID_USERNAME + " Number of Post : " + posts.size());
+
+        Assert.assertNull(pojo.getId());
     }
 
     @Test
-    public void tc009_schemaValidationPosts() {
-        ExtentTestManager.startTest(Constants.POSTS_ENDPOINT+" SchemaValidation","Schema Validation");
-        RestAssured.get(Constants.BASE_URL + Constants.POSTS_ENDPOINT).then().assertThat()
+    public void tc009_schemaValidationPosts() throws ClassNotFoundException {
+        ExtentTestManager.startTest(Constants.POSTS_ENDPOINT + " SchemaValidation", "Schema Validation");
+        Response response = JsonPlaceholder.getInstance().post.getPost.getPosts();
+        response.then().assertThat()
                 .body(matchesJsonSchemaInClasspath(Constants.POSTS_ENDPOINT.replace("/", "") + "_schema.json"));
     }
 }

@@ -2,7 +2,7 @@
 
 <suite name="API Testing Suite" verbose="1" parallel="none">
     <listeners>
-        <listener class-name="listeners.TestListener"/>
+        <listener class-name="utils.TestListener"/>
     </listeners>
     <test name="RestAssured-Java-Assignment" thread-count="1" preserve-order="true"  enabled="true">
         <classes>

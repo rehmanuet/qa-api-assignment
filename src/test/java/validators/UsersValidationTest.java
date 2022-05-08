@@ -1,7 +1,9 @@
 package validators;
 
+import base.JsonPlaceholder;
 import com.relevantcodes.extentreports.LogStatus;
 import extent.ExtentTestManager;
+import io.restassured.response.Response;
 import utils.Constants;
 import io.restassured.RestAssured;
 import org.testng.Assert;
@@ -13,33 +15,34 @@ public class UsersValidationTest extends ValidationBaseClass {
     @Test
     public void tc001_checkStatusCodeForUsers() {
         ExtentTestManager.startTest(Constants.USERS_ENDPOINT+" StatusCode","Status Code Verification");
-        int response_code = getStatusCode(Constants.USERS_ENDPOINT);
-        ExtentTestManager.getTest().log(LogStatus.INFO, "Endpoint: "+Constants.USERS_ENDPOINT+"Status Code: "+response_code);
-        Assert.assertEquals(response_code, 200);
+        Response response = JsonPlaceholder.getInstance().user.getUser.getUsers();
+        validateResponseStatusCode(response,200);
+//        ExtentTestManager.getTest().log(LogStatus.INFO, "Endpoint: "+Constants.USERS_ENDPOINT+"Status Code: "+response_code);
     }
 
     @Test
     public void tc002_checkIfUserIdExist() {
         ExtentTestManager.startTest(Constants.USERS_ENDPOINT+" CheckIfUserExist","User ID Verification");
-        int userId = getUser(Constants.VALID_USERNAME);
-        ExtentTestManager.getTest().log(LogStatus.INFO, "Username: "+Constants.VALID_USERNAME+" Found ID: "+userId);
-        Assert.assertNotNull(userId);
+
+        Integer id = JsonPlaceholder.getInstance().user.getUser.getUserIdByName(Constants.VALID_USERNAME);
+//        ExtentTestManager.getTest().log(LogStatus.INFO, "Username: "+Constants.VALID_USERNAME+" Found ID: "+userId);
+        Assert.assertNotEquals(id,0,"UserId not found");
     }
 
     @Test
     public void tc003_searchValidUser() {
         ExtentTestManager.startTest(Constants.USERS_ENDPOINT+" SearchValidUser","Check if valid user is present");
-        boolean isUserPresent = getUsername(Constants.VALID_USERNAME);
-        ExtentTestManager.getTest().log(LogStatus.INFO, "Username: "+Constants.VALID_USERNAME+" Is Present: "+isUserPresent);
-        Assert.assertTrue(isUserPresent);
+        Integer id = JsonPlaceholder.getInstance().user.getUser.getUserIdByName(Constants.VALID_USERNAME);
+//        ExtentTestManager.getTest().log(LogStatus.INFO, "Username: "+Constants.VALID_USERNAME+" Is Present: "+isUserPresent);
+        Assert.assertNotEquals(id,0,"UserId not found");
     }
 
     @Test
     public void tc004_searchInvalidUser() {
         ExtentTestManager.startTest(Constants.USERS_ENDPOINT+" SearchInvalidUser","Check response for invalid user");
-        boolean isUserPresent = getUsername(Constants.INVALID_USERNAME);
-        ExtentTestManager.getTest().log(LogStatus.INFO, "Username: "+Constants.INVALID_USERNAME+" Is Present: "+isUserPresent);
-        Assert.assertFalse(isUserPresent);
+        Integer id = JsonPlaceholder.getInstance().user.getUser.getUserIdByName(Constants.INVALID_USERNAME);
+//        ExtentTestManager.getTest().log(LogStatus.INFO, "Username: "+Constants.INVALID_USERNAME+" Is Present: "+isUserPresent);
+        Assert.assertEquals(id,0,"UserId found");
     }
 
     @Test

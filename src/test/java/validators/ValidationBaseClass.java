@@ -1,17 +1,20 @@
 package validators;
 
 import extent.ExtentTestManager;
-import org.testng.annotations.AfterClass;
+import io.restassured.response.Response;
+import org.testng.Assert;
 import org.testng.annotations.AfterSuite;
 import utils.Constants;
 import pojos.CommentsPOJO;
 import pojos.PostsPOJO;
 import pojos.UsersPOJO;
-import listeners.TestListener;
+import utils.TestListener;
 import io.restassured.RestAssured;
 import org.testng.annotations.Listeners;
+import com.google.gson.Gson;
+import org.json.simple.JSONObject;
 
-import javax.mail.MessagingException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,6 +70,10 @@ public class ValidationBaseClass {
         return RestAssured.get(Constants.BASE_URL + path).getStatusCode();
     }
 
+    public static void validateResponseStatusCode(Response response, int expectedCode) {
+        int actualCode = response.getStatusCode();
+        Assert.assertEquals(actualCode, expectedCode, "Response: status code NOT correct");
+    }
     /**
      * To retrieve the username of user
      *
@@ -102,23 +109,64 @@ public class ValidationBaseClass {
         return RestAssured.get(Constants.BASE_URL + Constants.POSTS_ENDPOINT + "/" + postId + Constants.COMMENTS_ENDPOINT).as(CommentsPOJO[].class);
     }
 
-    /**
-     * To retrieve all emails against the post made by specific users
-     *
-     * @param username, username of the user
-     */
-    ArrayList<String> getEmail(String username) {
-        ArrayList<String> emails = new ArrayList<>();
-        ArrayList<Integer> posts = getPosts(getUser(username));
-        for (int post : posts) {
-            CommentsPOJO[] comments = getComments(post);
-            for (CommentsPOJO comment : comments) {
-                emails.add(comment.getEmail());
-            }
+
+    public static <T> List<T> getListFromResponse(Response response, String path, Class<T> tClass) {
+        List<T> result = new ArrayList<>();
+        try {
+            result = response.jsonPath().getList(path, tClass);
+        } catch (Exception ex) {
+//            log(ex.getMessage());
+//            Logger.logError("FAILED to get list '" + path + "' from '" + response.body().asString() + "'");
         }
-        return emails;
+        return result;
+    }
+    public static <T> T getObjectFromResponsePath(Response response, String path, Class<T> tClass) {
+        // Step 1 -> get response body as hashMap
+        HashMap resultAsHashMap = new HashMap();
+        try {
+            resultAsHashMap = getResponsePath(response, path);
+        } catch (Exception ex) {
+
+        }
+        T result;
+        try {
+            // Step 2 -> Convert HashMap to JsonString
+            String jsonString = new JSONObject(resultAsHashMap).toJSONString();
+            // Step 3 -> Convert JsonString to Object of specified class
+            result = new Gson().fromJson(jsonString, tClass);
+        } catch (Exception e) {
+            result = null;
+        }
+
+        return result;
     }
 
+
+    public static <T> T getResponsePath(Response response, String path) {
+        T result = null;
+        try {
+            result = response.path(path);
+        } catch (Exception ex) {
+        }
+        return result;
+    }
+
+    public static <T> T getObjectFromResponse(Response response, Class<T> tClass) {
+        // Step 1 -> get response body as hashMap
+        HashMap resultAsHashMap = new HashMap();
+        try {
+            resultAsHashMap = response.as(HashMap.class);
+        } catch (Exception ex) {
+//            Logger.logError("FAILED to convert response: " + response.body().asString() + "' into HashMap'");
+//            log(ex.getMessage());
+        }
+        // Step 2 -> Convert HashMap to JsonString
+        String jsonString = new JSONObject(resultAsHashMap).toJSONString();
+        // Step 3 -> Convert JsonString to Object of specified class
+        T result = new Gson().fromJson(jsonString, tClass);
+
+        return result;
+    }
     /**
      * Executes at the end of the test suite to populate Extent Report and Send it as email
      */
