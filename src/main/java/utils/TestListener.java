@@ -6,8 +6,6 @@ import extent.ExtentTestManager;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
-import utils.Constants;
-import utils.FileUtils;
 
 /**
  * Standard TestNG Listener Class

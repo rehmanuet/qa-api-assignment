@@ -5,8 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CommentsPOJO {
-
+public class CommentPOJO {
     private Integer postId;
     private Integer id;
     private String name;

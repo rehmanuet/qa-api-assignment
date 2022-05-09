@@ -6,22 +6,19 @@ import utils.Constants;
 
 public class GetPost {
 
-    //    @Step("POST: /banking/account")
+    /**
+     * To retrieve all the posts
+     */
+    public Response getAllPosts() {
+        return RestAssured.get(Constants.BASE_URL + Constants.POSTS_ENDPOINT);
+    }
 
     /**
-     * To retrieve all the comments of specific post
+     * To retrieve all the posts of specific userId
+     *
+     * @param id, id of user
      */
-    public Response getPosts() {
-
-        return RestAssured.get(Constants.BASE_URL + Constants.POSTS_ENDPOINT);
-
-    }
-
     public Response getPostsByUserid(Integer id) {
-
         return RestAssured.get(Constants.BASE_URL + Constants.POSTS_ENDPOINT + '/' + id);
-
     }
-
-
 }

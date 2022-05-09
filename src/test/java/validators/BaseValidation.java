@@ -1,20 +1,16 @@
 package validators;
 
+import com.relevantcodes.extentreports.LogStatus;
 import extent.ExtentTestManager;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.AfterSuite;
-import utils.Constants;
-import pojos.CommentsPOJO;
-import pojos.PostsPOJO;
-import pojos.UsersPOJO;
+import org.testng.annotations.BeforeMethod;
+import org.testng.asserts.SoftAssert;
 import utils.TestListener;
-import io.restassured.RestAssured;
 import org.testng.annotations.Listeners;
 import com.google.gson.Gson;
 import org.json.simple.JSONObject;
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,11 +23,13 @@ import java.util.List;
  */
 
 @Listeners(TestListener.class)
-public class ValidationBaseClass {
+public class BaseValidation {
+    protected ThreadLocal<SoftAssert> softAssert = new ThreadLocal<>();
 
 
-    public static void validateResponseStatusCode(Response response, int expectedCode) {
+    public static void validateResponseStatusCode(Response response, String endpoint, int expectedCode) {
         int actualCode = response.getStatusCode();
+        ExtentTestManager.getTest().log(LogStatus.INFO, "Endpoint: " + endpoint + " Status Code: " + actualCode);
         Assert.assertEquals(actualCode, expectedCode, "Response: status code NOT correct");
     }
 
@@ -45,6 +43,7 @@ public class ValidationBaseClass {
         }
         return result;
     }
+
     public static <T> T getObjectFromResponsePath(Response response, String path, Class<T> tClass) {
         // Step 1 -> get response body as hashMap
         HashMap resultAsHashMap = new HashMap();
@@ -92,6 +91,7 @@ public class ValidationBaseClass {
 
         return result;
     }
+
     /**
      * Executes at the end of the test suite to populate Extent Report and Send it as email
      */
@@ -99,5 +99,18 @@ public class ValidationBaseClass {
     @AfterSuite(alwaysRun = true)
     public void endTestSuite() {
         ExtentTestManager.flush();
+    }
+
+    protected void skipRetryAndSoftAssert() {
+        softAssert.get().assertAll();
+    }
+
+    @BeforeMethod(alwaysRun = true)
+    public void beforeMethod() {
+        this.softAssert.set(new SoftAssert());
+    }
+
+    public void validateList(Integer size, String logMessage) {
+        if (size == 0) softAssert.get().fail(logMessage);
     }
 }
