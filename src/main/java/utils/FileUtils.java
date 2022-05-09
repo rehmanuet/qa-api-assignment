@@ -1,11 +1,13 @@
 package utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.*;
 import java.net.URL;
 
 import java.util.Properties;
 
-
+@Slf4j
 public class FileUtils {
 
 
@@ -29,7 +31,7 @@ public class FileUtils {
         //In case the message isn't retrieved, the test case flow can continue,
         //as this is just for console logging, and the exceptions will be logged in the console.
         catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            log.error(ex.getMessage());
         }
         return propertyValue;
     }
