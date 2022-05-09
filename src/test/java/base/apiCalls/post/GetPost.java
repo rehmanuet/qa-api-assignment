@@ -4,6 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import utils.Constants;
+import validators.BaseValidation;
 
 @Slf4j
 public class GetPost {
@@ -13,7 +14,7 @@ public class GetPost {
      */
     public Response getAllPosts() {
         log.info("getAllPosts()");
-        return RestAssured.get(Constants.BASE_URL + Constants.POSTS_ENDPOINT);
+        return RestAssured.get(BaseValidation.BASE_URL + Constants.POSTS_ENDPOINT);
     }
 
     /**
@@ -23,6 +24,6 @@ public class GetPost {
      */
     public Response getPostsByUserid(Integer id) {
         log.info("getPostsByUserid(): userid: " + id);
-        return RestAssured.get(Constants.BASE_URL + Constants.POSTS_ENDPOINT + '/' + id);
+        return RestAssured.get(BaseValidation.BASE_URL + Constants.POSTS_ENDPOINT + '/' + id);
     }
 }

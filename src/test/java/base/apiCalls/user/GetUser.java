@@ -5,6 +5,7 @@ import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import pojos.UserPOJO;
 import utils.Constants;
+import validators.BaseValidation;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class GetUser {
      */
     public Response getUsers() {
         log.info("getUsers()");
-        return RestAssured.get(Constants.BASE_URL + Constants.USERS_ENDPOINT);
+        return RestAssured.get(BaseValidation.BASE_URL + Constants.USERS_ENDPOINT);
     }
 
     /**

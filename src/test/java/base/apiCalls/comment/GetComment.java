@@ -5,6 +5,8 @@ import io.restassured.response.Response;
 
 import lombok.extern.slf4j.Slf4j;
 import utils.Constants;
+import validators.BaseValidation;
+
 @Slf4j
 public class GetComment {
     /**
@@ -14,7 +16,7 @@ public class GetComment {
      */
     public Response getCommentByPostId(int postId) {
         log.info("getCommentByPostId(): postId: "+postId);
-        return RestAssured.get(Constants.BASE_URL + Constants.POSTS_ENDPOINT + "/" + postId + Constants.COMMENTS_ENDPOINT);
+        return RestAssured.get(BaseValidation.BASE_URL + Constants.POSTS_ENDPOINT + "/" + postId + Constants.COMMENTS_ENDPOINT);
     }
 
     /**
@@ -22,7 +24,7 @@ public class GetComment {
      */
     public Response getAllComments() {
         log.info("getAllComments()");
-        return RestAssured.get(Constants.BASE_URL + Constants.COMMENTS_ENDPOINT);
+        return RestAssured.get(BaseValidation.BASE_URL + Constants.COMMENTS_ENDPOINT);
     }
 
 }

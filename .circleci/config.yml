@@ -22,4 +22,4 @@ jobs:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-      - run: mvn clean test -Dsurefire.suiteXmlFiles=TestNG.xml
+      - run: mvn clean test -Dsurefire.suiteXmlFiles=TestNG.xml -DbaseURI=https://jsonplaceholder.typicode.com

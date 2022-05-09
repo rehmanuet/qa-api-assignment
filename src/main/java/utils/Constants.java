@@ -5,7 +5,6 @@ public class Constants {
     /**
      * Constants for Endpoint
      */
-    public static String BASE_URL = "https://jsonplaceholder.typicode.com";
     public static String USERS_ENDPOINT = "/users";
     public static String POSTS_ENDPOINT = "/posts";
     public static String COMMENTS_ENDPOINT = "/comments";

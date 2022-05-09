@@ -5,11 +5,9 @@ import extent.ExtentTestManager;
 import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.*;
 import org.testng.asserts.SoftAssert;
 import utils.TestListener;
-import org.testng.annotations.Listeners;
 import com.google.gson.Gson;
 import org.json.simple.JSONObject;
 
@@ -28,7 +26,7 @@ import java.util.List;
 @Slf4j
 public class BaseValidation {
     protected ThreadLocal<SoftAssert> softAssert = new ThreadLocal<>();
-
+    public static String BASE_URL;
 
     public static void validateResponseStatusCode(Response response, String endpoint, int expectedCode) {
         int actualCode = response.getStatusCode();
@@ -78,17 +76,22 @@ public class BaseValidation {
         ExtentTestManager.flush();
     }
 
+    @Parameters({"baseURI"})
+    @BeforeSuite(alwaysRun = true)
+    public void startTestSuite(String baseURI) {
+        BASE_URL = baseURI;
+    }
+
     protected void skipRetryAndSoftAssert() {
         softAssert.get().assertAll();
     }
 
     @BeforeMethod(alwaysRun = true)
-    public void beforeMethod() {
+    public void beforeTestMethod() {
         this.softAssert.set(new SoftAssert());
     }
 
     public void validateList(Integer size, String logMessage) {
         if (size == 0) softAssert.get().fail(logMessage);
     }
-
 }

@@ -4,7 +4,6 @@ import base.JsonPlaceholder;
 import extent.ExtentTestManager;
 import io.restassured.response.Response;
 import utils.Constants;
-import io.restassured.RestAssured;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -43,7 +42,8 @@ public class UsersTest extends BaseValidation {
     @Test
     public void tc005_schemaValidationUsers() {
         ExtentTestManager.startTest(Constants.USERS_ENDPOINT + " SchemaValidation", "Schema Validation");
-        RestAssured.get(Constants.BASE_URL + Constants.USERS_ENDPOINT).then().assertThat()
+        Response response = JsonPlaceholder.getInstance().user.getUser.getUsers();
+        response.then().assertThat()
                 .body(matchesJsonSchemaInClasspath(Constants.USERS_ENDPOINT.replace("/", "") + "_schema.json"));
     }
 }
